@@ -1,0 +1,22 @@
+- hosts: 10.248.65.109
+  tasks:
+    - name: Install a rear pkg
+      yum: name=rear state=latest
+    - name: copy
+      copy:
+        src: /etc/ansible/roles/rear.txt
+        dest: /var/tmp
+        owner: root
+        group: root
+        mode: 0777
+    - name: Redirect
+      shell: cat /var/tmp/rear.txt  >>  /etc/rear/local.conf
+      register: vgroot
+    - name: Create
+      shell:  df -h | head -2 | tail -1 | awk '{print$1}' | awk -F'/' '{print$NF}' | awk -F'-' '{print$1}'
+      register: shell_output
+    - debug:
+        msg: msg="{{shell_output.stdout}}"
+    - lineinfile:
+           path: /etc/rear/local.conf
+           line: ONLY_INCLUDE_VG=({{shell_output.stdout}})
