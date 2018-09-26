@@ -1,4 +1,4 @@
-- hosts: 10.248.65.109
+- hosts: all
   tasks:
     - name: Install a rear pkg
       yum: name=rear state=latest
